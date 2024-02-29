@@ -1,17 +1,10 @@
-# เลือกภาพฐานของ Node.js
-FROM node:latest
-
-# ติดตั้งทุกอย่างที่จำเป็น
+FROM node:boron
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install
-
-# คัดลอกโค้ดและคอมไพล์ TypeScript
-COPY . .
-RUN npx tsc
-
-# ระบุพอร์ตที่แอปพลิเคชันของคุณใช้
+ARG CACHEBUST=2 
+COPY package.json /usr/src/app/
+RUN npm install -D typescript ts-node-dev
+RUN tsc --init
+COPY . /usr/src/app
 EXPOSE 3000
-
-# เรียกใช้โปรแกรมที่คอมไพล์แล้ว
-CMD ["node", "dist/server.js"]
+CMD ["npx","ts-node","server.ts"]
